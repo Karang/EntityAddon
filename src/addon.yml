@@ -1,0 +1,9 @@
+name: EntityAddon
+version: 1.0
+description: Adding entities to spoutcraft.
+authors: [Karang]
+website: http://dawn-octopus.fr
+
+main: EntityAddon
+
+mode: BOTH
