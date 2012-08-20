@@ -1,41 +1,50 @@
 
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.lwjgl.input.Keyboard;
 import org.spoutcraft.client.entity.CraftEntity;
-import org.spoutcraft.spoutcraftapi.Spoutcraft;
 import org.spoutcraft.spoutcraftapi.addon.java.JavaAddon;
 import org.spoutcraft.spoutcraftapi.io.AddonPacket;
 import org.spoutcraft.spoutcraftapi.keyboard.KeyBinding;
 
 public class EntityAddon extends JavaAddon {
+	public static String pathToCache;
 	public static EntityAddon addon;
-	public KeyBinding testKey;
 	
-	public EntityDesign mailbox;
+	public KeyBinding testKey;
 	
 	public void onDisable() {
 		
 	}
 
 	public void onEnable() {
-		AddonPacket.register(CustomEntityPacket.class, "Custom Entity");
+		if (!getDataFolder().exists())
+			getDataFolder().mkdir();
+		
+		pathToCache = getDataFolder().getPath()+"/cache";
+		File cache = new File(pathToCache);
+		if (!cache.exists())
+			cache.mkdir();
+		
 		addon = this;
+		AddonPacket.register(CustomEntityPacket.class, "entity");
+		AddonPacket.register(EntityDesignPacket.class, "entityDesign");
+		
 		testKey = new KeyBinding(Keyboard.KEY_E, this, "Entity addon", "spawn entity");
 		testKey.setDelegate(new AddonKeyDelegate(this));
 		this.getClient().getKeyBindingManager().registerControl(testKey);
+		
 		this.getClient().getActivePlayer().sendMessage("[Entity Addon] enabled");
 		
 		registerTypes(CustomEntity.class, CraftCustomEntity.class);
 		registerRender(EntityCustom.class, new RenderCustomEntity());
-		
-		mailbox = new EntityDesign(Spoutcraft.getAddonFolder().getAbsolutePath()+"/EntityAddon/mailbox.obj");
 	}
 	
-	public void registerRender(Class<?> entity, RenderCustomEntity render) {
+	public void registerRender(Class<?> entity, it render) {
 		try {
 			Field entityRenderMap = Class.forName("ahu").getDeclaredField("o");
 			entityRenderMap.setAccessible(true);

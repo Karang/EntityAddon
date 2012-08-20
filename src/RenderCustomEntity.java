@@ -24,14 +24,14 @@ public class RenderCustomEntity extends RenderText {
 			return;
 		
 	    GL11.glPushMatrix();
-	    yaw = customEntity.isRotateWithPlayer() ? e.i : yaw;
+	    tf.a();
 		GL11.glTranslated(x, y, z);
 		GL11.glRotatef(yaw, 0, 1.0F, 0);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, customEntity.texture.getTextureID());
+		
 		adz tessellator = adz.a;
 		tessellator.b();
-		
 		for (String face : customEntity.design.faces) {
 			for (String vertex : face.substring(2).split(" ")) {
 				Vector3f v = customEntity.design.vertices.get(Integer.valueOf(vertex.split("/")[0])-1);
@@ -39,10 +39,10 @@ public class RenderCustomEntity extends RenderText {
 				tessellator.a(v.x, v.y, v.z, t.x, t.y);
 			}
 		}
-		
 		tessellator.a();
 		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		tf.b();
 		GL11.glPopMatrix();
 	  }
 }
