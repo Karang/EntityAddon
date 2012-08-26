@@ -5,17 +5,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import org.lwjgl.input.Keyboard;
 import org.spoutcraft.client.entity.CraftEntity;
 import org.spoutcraft.spoutcraftapi.addon.java.JavaAddon;
 import org.spoutcraft.spoutcraftapi.io.AddonPacket;
-import org.spoutcraft.spoutcraftapi.keyboard.KeyBinding;
 
 public class EntityAddon extends JavaAddon {
 	public static String pathToCache;
 	public static EntityAddon addon;
-	
-	public KeyBinding testKey;
+	public HashMap<Integer, CustomEntity> entities = new HashMap<Integer, CustomEntity>();
 	
 	public void onDisable() {
 		
@@ -31,12 +28,10 @@ public class EntityAddon extends JavaAddon {
 			cache.mkdir();
 		
 		addon = this;
-		AddonPacket.register(CustomEntityPacket.class, "entity");
-		AddonPacket.register(EntityDesignPacket.class, "entityDesign");
-		
-		testKey = new KeyBinding(Keyboard.KEY_E, this, "Entity addon", "spawn entity");
-		testKey.setDelegate(new AddonKeyDelegate(this));
-		this.getClient().getKeyBindingManager().registerControl(testKey);
+		AddonPacket.register(PacketCustomEntity.class, "entity");
+		AddonPacket.register(PacketEntityDesign.class, "entityDesign");
+		AddonPacket.register(PacketCustomInteract.class, "entityInteract");
+		AddonPacket.register(PacketVehicle.class, "entityVehicle");
 		
 		this.getClient().getActivePlayer().sendMessage("[Entity Addon] enabled");
 		
@@ -70,6 +65,14 @@ public class EntityAddon extends JavaAddon {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public CustomEntity getEntity(int entityId) {
+		return entities.get(entityId);
+	}
+	
+	public void addEntity(int entityId, CustomEntity entity) {
+		entities.put(entityId, entity);
 	}
 	
 	public static EntityAddon getInstance() {
